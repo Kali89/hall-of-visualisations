@@ -1,0 +1,93 @@
+$def with (result_dictionary)
+
+<!DOCTYPE html>
+<html>
+<head>
+<script type='text/javascript' src='https://www.google.com/jsapi'></script>
+<script src="http://code.jquery.com/jquery-1.10.2.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.4/themes/smoothness/jquery-ui.css">
+<script src="http://code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
+<script type='text/javascript'>
+	  var iRock = "$result_dictionary";
+	  var areaCodeRegex = new RegExp("GB-\w{3}");
+	  var areaCode;
+	  var averagePrice;
+	  var newString;
+	  var newArray = [];
+	  var uRock = iRock.split(',');
+	  for (var i = 0; i < uRock.length; i++) {
+		  // &#39;GB-WRT&#39;: 166418.83116883118
+		  newString = uRock[i].split("&#39;").join("").split(':');
+		  areaCode = newString[0].replace("{","").replace("}","");
+		  averagePrice = parseFloat(newString[1]);
+		  newArray.push([areaCode, averagePrice]);
+	  }
+	  
+	 // var lulwot = [
+		//	['GB-CON',      2761477,    1285.31],
+			//['GB-BUR',     1324110,    181.76]
+		 //];
+  google.load('visualization', '1', {'packages': ['geochart']});
+
+     google.setOnLoadCallback(function() {drawRegionsMap(newArray)});
+     
+     
+     function drawRegionsMap(datey) {
+		 var data = new google.visualization.DataTable();
+		 data.addColumn('string', 'Region');
+		 data.addColumn('number', 'Average House Price');
+		 data.addRows(datey);
+		 var options = {
+			 region: 'GB',
+			 displayMode: 'markers',
+			 colorAxis: {colors: ['green', 'blue']}
+		 };
+		 var chart = new google.visualization.GeoChart(document.getElementById('chart_div'));
+		 chart.draw(data, options);
+	 };
+</script>
+<script>
+\$(function() {
+	\$( "#slider" ).slider({
+		value:1995,
+		min: 1995,
+		max: 2014,
+		step: 1,
+		slide: function( event, ui ) {
+			\$( "#amount" ).val(ui.value );
+		}
+	});
+	\$( "#amount" ).val(\$( "#slider" ).slider( "value" ));
+	var startPos = '\$("slider").slider("value");', endPos = '';
+	\$("#slider").on("slidestop", function(event, ui) {
+		endPos = ui.value;
+		if (startPos != endPos) {
+			\$.ajax({
+				type: "POST",
+				data: { year : endPos},
+				success: function(data) {
+					\$("#thingy").hide();
+					\$("#test_section").html("<p> " + data + "</p>");
+					newDrawRegionsMap(\$.json(data));
+				},
+			});
+			alert("You stopped sliding at " + endPos);
+		}
+		startPos = endPos;
+	});
+});
+</script>
+</head>
+<body>
+<p>
+<label for="amount">Year:</label>
+<input type="text" id="amount" style="border:0; color:#f6931f; font-weight:bold;">
+</p>
+
+<div id="slider"></div>
+<div id="thingy">$result_dictionary</div>
+<div id="test_section"></div>
+<div id="chart_div" style="width: 900px; height: 500px;"></div>
+</body>
+</html>
