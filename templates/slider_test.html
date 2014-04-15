@@ -30,7 +30,6 @@ $def with (result_dictionary)
                     type: "POST",
                     data: { year : endPos},
                     success: function(data) {
-                        \$("#thingy").hide();
                         drawRegionsMap(createArrayFromResults("$result_dictionary"));
                     },
                 });
@@ -70,7 +69,6 @@ $def with (result_dictionary)
 <label for="amount">Year:</label>
 <input type="text" id="amount" style="border:0; color:#f6931f; font-weight:bold;">
 </p>
-<div id="thingy">$result_dictionary</div>
 <div id="chart_div" style="width: 900px; height: 500px;"></div>
 <div id="slider"></div>
 </body>
